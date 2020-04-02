@@ -17,6 +17,26 @@
   include: opendistro_security.yml
   when: opendistro_security_install
 
+- name: include opendistro alerting for elasticsearch
+  include: opendistro_alerting.yml
+  when: opendistro_alerting_install
+
+- name: include opendistro sql for elasticsearch
+  include: opendistro_sql.yml
+  when: opendistro_sql_install
+
+- name: include opendistro job scheduler for elasticsearch
+  include: opendistro_job_scheduler.yml
+  when: opendistro_job_scheduler_install
+
+- name: include opendistro perfomance analyzer for elasticsearch
+  include: opendistro_performance_analyzer.yml
+  when: opendistro_performance_analyzer_install
+
+- name: include opendistro index management for elasticsearch
+  include: opendistro_index_management.yml
+  when: opendistro_index_management_install
+
 - name: include kibana installation
   include: kibana.yml
   when: inventory_hostname in groups['kibana']

@@ -30,7 +30,7 @@
   when: install.changed
 
 - name: Security Plugin Install | Extract the certificates generation tool
-  local_action: command chdir=/tmp/opendistro-nodecerts tar -xvf search-guard-tlstool.zip
+  local_action: command chdir=/tmp/opendistro-nodecerts unzip search-guard-tlstool.zip
   run_once: true
   when: install.changed
 
@@ -90,6 +90,13 @@
   systemd:
     name: elasticsearch
     state: restarted
+  when: install.changed
+
+- name: Wait for port 9300 to become open on the hosts
+  wait_for:
+    host: "{{ ansible_host }}"
+    port: 9300
+    delay: 20
   when: install.changed
 
 - name: Security Plugin Install | Copy the opendistro security internal users template

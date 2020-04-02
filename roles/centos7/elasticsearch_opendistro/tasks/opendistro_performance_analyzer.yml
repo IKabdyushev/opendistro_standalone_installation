@@ -1,0 +1,27 @@
+---
+
+- name: performance Analyzer Plugin Install | Download Opendistro Elasticsearch performance Analyzer plugin {{ opendistro_performance_analyzer_version }}
+  get_url:
+    url: "{{ opendistro_performance_analyzer_download_url }}opendistro_performance_analyzer-{{ opendistro_performance_analyzer_version }}.zip"
+    dest: "{{ es_home }}/opendistro_performance_analyzer-{{ opendistro_performance_analyzer_version }}.zip"
+  register: download
+
+- name: performance Analyzer Plugin Install | Install the Opendistro performance Analyzer plugin
+  command: "{{ es_plugin_bin_path }} install -b file://{{ es_home }}/opendistro_performance_analyzer-{{ opendistro_performance_analyzer_version }}.zip"
+  when: download.changed
+  register: install
+
+- name: performance Analyzer Plugin Install | Restart elasticsearch with performance Analyzer configuration
+  systemd:
+    name: elasticsearch
+    state: restarted
+  when: install.changed
+
+- name: Wait for port 9300 to become open on the hosts
+  wait_for:
+    host: "{{ ansible_host }}"
+    port: 9300
+    delay: 20
+  when: install.changed
+
+

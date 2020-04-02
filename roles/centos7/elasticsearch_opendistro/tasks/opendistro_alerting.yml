@@ -1,0 +1,27 @@
+---
+
+- name: Alerting Plugin Install | Download Opendistro Elasticsearch alerting plugin {{ opendistro_alerting_version }}
+  get_url:
+    url: "{{ opendistro_alerting_download_url }}opendistro_alerting-{{ opendistro_alerting_version }}.zip"
+    dest: "{{ es_home }}/opendistro_alerting-{{ opendistro_alerting_version }}.zip"
+  register: download
+
+- name: Alerting Plugin Install | Install the Opendistro alerting plugin
+  command: "{{ es_plugin_bin_path }} install -b file://{{ es_home }}/opendistro_alerting-{{ opendistro_alerting_version }}.zip"
+  when: download.changed
+  register: install
+
+- name: Alerting Plugin Install | Restart elasticsearch with alerting configuration
+  systemd:
+    name: elasticsearch
+    state: restarted
+  when: install.changed
+
+- name: Wait for port 9300 to become open on the hosts
+  wait_for:
+    host: "{{ ansible_host }}"
+    port: 9300
+    delay: 20
+  when: install.changed
+
+

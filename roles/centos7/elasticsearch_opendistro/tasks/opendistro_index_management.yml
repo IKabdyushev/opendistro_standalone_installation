@@ -1,0 +1,27 @@
+---
+
+- name: Index Management Plugin Install | Download Opendistro Elasticsearch Index Management plugin {{ opendistro_index_management_version }}
+  get_url:
+    url: "{{ opendistro_index_management_download_url }}opendistro_index_management-{{ opendistro_index_management_version }}.zip"
+    dest: "{{ es_home }}/opendistro_index_management-{{ opendistro_index_management_version }}.zip"
+  register: download
+
+- name: Index Management Plugin Install | Install the Opendistro Index Management plugin
+  command: "{{ es_plugin_bin_path }} install -b file://{{ es_home }}/opendistro_index_management-{{ opendistro_index_management_version }}.zip"
+  when: download.changed
+  register: install
+
+- name: Index Management Plugin Install | Restart elasticsearch with Index Management configuration
+  systemd:
+    name: elasticsearch
+    state: restarted
+  when: install.changed
+
+- name: Wait for port 9300 to become open on the hosts
+  wait_for:
+    host: "{{ ansible_host }}"
+    port: 9300
+    delay: 20
+  when: install.changed
+
+

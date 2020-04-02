@@ -1,0 +1,27 @@
+---
+
+- name: Job Scheduler Plugin Install | Download Opendistro Elasticsearch Job Scheduler plugin {{ opendistro_job_scheduler_version }}
+  get_url:
+    url: "{{ opendistro_job_scheduler_download_url }}opendistro-job-scheduler-{{ opendistro_job_scheduler_version }}.zip"
+    dest: "{{ es_home }}/opendistro-job-scheduler-{{ opendistro_job_scheduler_version }}.zip"
+  register: download
+
+- name: Job Scheduler Plugin Install | Install the Opendistro Job Scheduler plugin
+  command: "{{ es_plugin_bin_path }} install -b file://{{ es_home }}/opendistro-job-scheduler-{{ opendistro_job_scheduler_version }}.zip"
+  when: download.changed
+  register: install
+
+- name: Job Scheduler Plugin Install | Restart elasticsearch with Job Scheduler configuration
+  systemd:
+    name: elasticsearch
+    state: restarted
+  when: install.changed
+
+- name: Wait for port 9300 to become open on the hosts
+  wait_for:
+    host: "{{ ansible_host }}"
+    port: 9300
+    delay: 20
+  when: install.changed
+
+
