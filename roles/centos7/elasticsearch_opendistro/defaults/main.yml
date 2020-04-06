@@ -1,5 +1,23 @@
 ---
 # defaults file for elasticsearch
+
+authc_ldap_http_enabled: false
+authc_ldap_transport_enabled: false
+authc_ldap_order: 5
+authc_ldap_enable_ssl: false 
+authc_ldap_enable_start_tls: false
+authc_ldap_enable_ssl_client_auth: false
+authc_ldap_verify_hostnames: true
+authc_ldap_hosts:
+  - "localhost:8389"
+authc_ldap_bind_dn: null
+authc_ldap_password: null
+authc_ldap_userbase: "ou=people,dc=example,dc=com"
+authc_ldap_usersearch: '(sAMAccountName={0})'
+authc_ldap_username_attribute: null
+authc_ldap_pemtrustedcas_content: |-
+  HERE IS CONTENT
+
 es_java_install: true
 update_java: false
 es_version: "7.3.2"
