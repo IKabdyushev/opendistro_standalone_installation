@@ -1,0 +1,91 @@
+_meta:
+  type: "roles"
+  config_version: 2
+
+# Restrict users so they can only view visualization and dashboard on kibana
+kibana_read_only:
+  reserved: true
+
+# The security REST API access role is used to assign specific users access to change the security settings through the REST API.
+security_rest_api_access:
+  reserved: true
+ 
+# Allows users to view alerts
+alerting_view_alerts:
+  reserved: true
+  index_permissions:
+    - index_patterns:
+      - ".opendistro-alerting-alert*"
+      allowed_actions:
+        - read 
+
+# Allows users to view and acknowledge alerts
+alerting_crud_alerts:
+  reserved: true
+  index_permissions:
+    - index_patterns:
+      - ".opendistro-alerting-alert*"
+      allowed_actions:
+       - crud 
+
+# Allows users to use all alerting functionality
+alerting_full_access:
+  reserved: true
+  index_permissions:
+    - index_patterns:
+      - ".opendistro-alerting-config"
+      - ".opendistro-alerting-alert*"
+      allowed_actions:
+        - crud
+
+filebeat_setup:
+  cluster_permissions:
+    - monitor
+    - manage_ilm
+    - manage_ml
+  index_permissions:
+    - index_patterns:
+      - "filebeat-*"
+      allowed_actions:
+        - read
+        - manage
+
+filebeat_monitoring:
+  cluster_permissions:
+    - monitor
+  index_permissions:
+    - index_patterns:
+      - ".monitoring-beats-*"
+      allowed_actions:
+        - create_index
+        - create_doc
+
+filebeat_writer:
+  cluster_permissions:
+    - monitor
+    - read_ilm
+    - cluster:admin/ingest/pipeline/get
+    - indices:data/write/index
+    - indices:data/write/bulk*
+    - indices:data/write/bulk
+  index_permissions:
+    - index_patterns:
+      - "filebeat-*"
+      allowed_actions:
+        - create_index
+        - view_index_metadata
+        - create_doc
+  tenant_permissions:
+    - tenant_patterns:
+      - "global_tenant"
+      allowed_actions:
+      - "kibana_all_write"
+      - "kibana_all_read"
+
+filebeat_reader:
+  index_permissions:
+    - index_patterns:
+      - "filebeat-*"
+      allowed_actions:
+        - read
+

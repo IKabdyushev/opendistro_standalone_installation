@@ -13,6 +13,9 @@ opendistro_security_download_url: https://d3g5vo6xdbdb9a.cloudfront.net/download
 ## Admin user credentials will be used for User & Roles management and cluster operations
 admin_password: Test@123
 
+filebeat_password: test
+logstash_password: test
+
 ## Kibana server credentials will be used internally by the Kibana server
 kibanaserver_password: Test@6789
 

@@ -19,3 +19,27 @@ kibanaserver:
   hash: "{{ kibanaserver_password }}"
   reserved: true
   description: "kibanaserver user"
+
+logstash_user:
+  hash: "{{ logstash_password }}"
+  reserved: true
+  opendistro_security_roles:
+  - "logstash"
+  backend_roles:
+  - "logstash"
+  description: "Logstash User"
+
+filebeat_admin:
+  hash: "{{ filebeat_password }}"
+  reserved: true
+  opendistro_security_roles:
+  - "filebeat_reader"
+  - "filebeat_writer"
+  - "filebeat_monitoring"
+  - "filebeat_setup"
+  backend_roles:
+  - "filebeat_reader"
+  - "filebeat_writer"
+  - "filebeat_monitoring"
+  - "filebeat_setup"
+  description: "Filebeat user"
