@@ -31,7 +31,6 @@ kibana_user:
   reserved: false
   backend_roles:
   - "kibanauser"
-  - "{{ authz_ldap_group_read_only }}"
   description: "Maps kibanauser to kibana_user"
 
 readall:
