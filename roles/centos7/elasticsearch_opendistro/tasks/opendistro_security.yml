@@ -115,6 +115,13 @@
     mode: 0644
   run_once: true
 
+- name: Security Plugin Install | Copy the opendistro security roles_mapping template
+  template:
+    src: roles_mapping.yml
+    dest: "{{ es_sec_plugin_conf_path }}/roles_mapping.yml"
+    mode: 0644
+  run_once: true
+
 - name: Security Plugin Install | Set the filebeat password
   shell: >
     sed -i 's,{{ filebeat_password }},'$(sh {{ es_sec_plugin_tools_path }}/hash.sh -p {{ filebeat_password }} | tail -1)','

@@ -170,7 +170,7 @@ config:
             # verify ldap hostname
             verify_hostnames: {{ authc_ldap_verify_hostnames|string|lower }}
             hosts:
-              {% for host in authc_ldap_hosts %}
+              {% for host in authc_ldap_hosts -%}
               - {{ host }}
               {% endfor %}
 
@@ -183,50 +183,58 @@ config:
             # Use this attribute from the user as username (if not set then DN is used)
             username_attribute: {{ authc_ldap_username_attribute }}
     authz:
-      roles_from_myldap:
+      ldap:
         description: "Authorize via LDAP or Active Directory"
-        http_enabled: false
-        transport_enabled: false
+        http_enabled: {{ authz_ldap_http_enabled|string|lower }}
+        transport_enabled: {{ authz_ldap_transport_enabled|string|lower }}
         authorization_backend:
-          # LDAP authorization backend (gather roles from a LDAP or Active Directory, you have to configure the above LDAP authentication backend settings too)
+          # LDAP authorization backend (authenticate users against a LDAP or Active Directory)
           type: ldap
           config:
             # enable ldaps
-            enable_ssl: false
+            enable_ssl: {{ authz_ldap_enable_ssl|string|lower }}
+            pemtrustedcas_content: |-
+              {{ authz_ldap_pemtrustedcas_content | indent( width=14 ) }}
             # enable start tls, enable_ssl should be false
-            enable_start_tls: false
+            enable_start_tls: {{ authz_ldap_enable_start_tls|string|lower }}
             # send client certificate
-            enable_ssl_client_auth: false
+            enable_ssl_client_auth: {{ authz_ldap_enable_ssl_client_auth|string|lower }}
             # verify ldap hostname
-            verify_hostnames: true
+            verify_hostnames: {{ authz_ldap_verify_hostnames|string|lower }}
             hosts:
-            - localhost:8389
-            bind_dn: null
-            password: null
-            rolebase: 'ou=groups,dc=example,dc=com'
+              {% for host in authz_ldap_hosts -%}
+              - {{ host }}
+              {% endfor %}
+            
+            bind_dn: {{ authz_ldap_bind_dn }}
+            password: {{ authz_ldap_password }}
+            rolebase: {{ authz_ldap_rolebase }}
             # Filter to search for roles (currently in the whole subtree beneath rolebase)
             # {0} is substituted with the DN of the user
             # {1} is substituted with the username
             # {2} is substituted with an attribute value from user's directory entry, of the authenticated user. Use userroleattribute to specify the name of the attribute
-            rolesearch: '(member={0})'
+            rolesearch: {{ authz_ldap_rolesearch }}
             # Specify the name of the attribute which value should be substituted with {2} above
             userroleattribute: null
             # Roles as an attribute of the user entry
-            userrolename: disabled
+            userrolename: {{ authz_ldap_userrolename }}
+            username_attribute: {{ authz_ldap_username_attribute }}
             #userrolename: memberOf
             # The attribute in a role entry containing the name of that role, Default is "name".
             # Can also be "dn" to use the full DN as rolename.
             rolename: cn
             # Resolve nested roles transitive (roles which are members of other roles and so on ...)
-            resolve_nested_roles: true
-            userbase: 'ou=people,dc=example,dc=com'
+            resolve_nested_roles: false
+            userbase: {{ authz_ldap_userbase }}
             # Filter to search for users (currently in the whole subtree beneath userbase)
             # {0} is substituted with the username
-            usersearch: '(uid={0})'
+            usersearch: {{ authz_ldap_usersearch }}
             # Skip users matching a user name, a wildcard or a regex pattern
-            #skip_users:
-            #  - 'cn=Michael Jackson,ou*people,o=TEST'
-            #  - '/\S*/'
+            skip_users:
+              {% for user in authz_ldap_skip_users -%}
+              - {{ user }}
+              {% endfor %}
+
       roles_from_another_ldap:
         description: "Authorize via another Active Directory"
         http_enabled: false
