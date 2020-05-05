@@ -140,6 +140,12 @@
     {{ es_sec_plugin_conf_path }}/internal_users.yml
   run_once: true
 
+- name: Security Plugin Install | Set the elasticsearch_exporter password
+  shell: >
+    sed -i 's,{{ elasticsearch_exporter_password }},'$(sh {{ es_sec_plugin_tools_path }}/hash.sh -p {{ elasticsearch_exporter_password }} | tail -1)','
+    {{ es_sec_plugin_conf_path }}/internal_users.yml
+  run_once: true
+
 - name: Security Plugin Install | Set the kibanaserver user pasword
   shell: >
     sed -i 's,{{ kibanaserver_password }},'$(sh {{ es_sec_plugin_tools_path }}/hash.sh -p {{ kibanaserver_password }} | tail -1)','
