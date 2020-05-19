@@ -128,6 +128,12 @@
     {{ es_sec_plugin_conf_path }}/internal_users.yml
   run_once: true
 
+- name: Security Plugin Install | Set the jaeger password
+  shell: >
+    sed -i 's,{{ jaeger_password }},'$(sh {{ es_sec_plugin_tools_path }}/hash.sh -p {{ jaeger_password }} | tail -1)','
+    {{ es_sec_plugin_conf_path }}/internal_users.yml
+  run_once: true
+
 - name: Security Plugin Install | Set the logstash password
   shell: >
     sed -i 's,{{ logstash_password }},'$(sh {{ es_sec_plugin_tools_path }}/hash.sh -p {{ logstash_password }} | tail -1)','
